@@ -1,7 +1,6 @@
 print("********************************************************************")
 print("CN vs AD VGG LSTM Axial now running")
 
-
 import pickle
 import pandas as pd
 import datetime
@@ -309,12 +308,8 @@ vgg_lstm.compile(
     optimizer=tf.keras.optimizers.Adam(0.000001),
     loss='binary_crossentropy',metrics='accuracy')
 
-
 print('reached')    
-#sys.exit(1)
-#fit_cross_validation_triplet(vgg_lstm, cv_file, params_dict, datapath, checkpoint_path, history_path)
-
-
+fit_cross_validation_triplet(vgg_lstm, cv_file, params_dict, datapath, checkpoint_path, history_path)
 
 history_file = history_path + "/AD_MCI_1365_vgg-bilstm-bilstm_1_16_08_21_axial_slices.csv"
 
@@ -324,36 +319,27 @@ print(aa['validation_loss'].min())
 print(aa['validation_loss'].idxmin())
 
 min_loss_idx = aa['validation_loss'].idxmin()+1
-
 vgg_lstm.load_weights('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/model_checkpoints/AD_MCI_1365_vgg-bilstm-bilstm_1_16_08_21_axial_slices_000000'+str(min_loss_idx)+'.h5')
 
 vgg_lstm.save('CN-vs-AD-VGG-LSTM-cor_MyModel')
-#cv_setting = load_cross_validation_settings(cv_file)
-#
-#print("\n\n\n\n\n\n")
-#
-#full_test_dict = cv_setting['validation']
-#test_subject_id = full_test_dict['subject_dict']
-#test_subject_group = full_test_dict['subject_group']
-#test_subject_slices = full_test_dict['subject_slices']
-#test_subject_fnames = list(test_subject_id.keys())
-#slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
-#testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
-#print('validation:\n')
-#vgg_lstm.evaluate(testing_generator,verbose=1) #batch size - 4
-#
-#print("\n\n\n\n\n\n")
-#
-#full_test_dict = cv_setting['test']
-#test_subject_id = full_test_dict['subject_dict']
-#test_subject_group = full_test_dict['subject_group']
-#test_subject_slices = full_test_dict['subject_slices']
-#test_subject_fnames = list(test_subject_id.keys())
-#slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
-#testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
-#print('\n\ntesting:\n')
-#vgg_lstm.evaluate(testing_generator,verbose=1) #batch size - 4
+cv_setting = load_cross_validation_settings(cv_file)
 
+full_test_dict = cv_setting['validation']
+test_subject_id = full_test_dict['subject_dict']
+test_subject_group = full_test_dict['subject_group']
+test_subject_slices = full_test_dict['subject_slices']
+test_subject_fnames = list(test_subject_id.keys())
+slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
+testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
+print('validation:\n')
+vgg_lstm.evaluate(testing_generator,verbose=1) #batch size - 4
 
-
-
+full_test_dict = cv_setting['test']
+test_subject_id = full_test_dict['subject_dict']
+test_subject_group = full_test_dict['subject_group']
+test_subject_slices = full_test_dict['subject_slices']
+test_subject_fnames = list(test_subject_id.keys())
+slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
+testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
+print('\n\ntesting:\n')
+vgg_lstm.evaluate(testing_generator,verbose=1) #batch size - 4
