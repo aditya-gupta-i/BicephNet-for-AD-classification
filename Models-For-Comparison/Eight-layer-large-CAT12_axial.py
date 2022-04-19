@@ -1,7 +1,6 @@
 print("********************************************************************")
 print("Eight layer large CAT 12 Axial now running")
 
-
 import pickle
 import pandas as pd
 import datetime
@@ -169,21 +168,12 @@ def fit_crossvalidation(model, cv_file, generator_params_dict, datapath, checkpo
     train_class_ID = []
     train_class_label = {}
     train_subj_slices = []
-    
-#     print(train_subject_group)
-#     print(type(train_subject_group))
-    
-#     import sys
-#     sys.exit(1)
-    
+        
     for idx in train_subject_id.keys():
         tmp_id = train_subject_id[idx]
         tmp_grp = train_subject_group[idx]
         tmp_slices = train_subject_slices[idx]
         
-#         train_class_ID.append(tmp_id)
-#         train_class_label.append(tmp_grp)
-#         train_subj_slices.append(tmp_slices)
         label = None
     
         if tmp_grp ==  'MCI':
@@ -206,10 +196,6 @@ def fit_crossvalidation(model, cv_file, generator_params_dict, datapath, checkpo
         tmp_id = val_subject_id[idx]
         tmp_grp = val_subject_group[idx]
         tmp_slices = val_subject_slices[idx]
-        
-#         val_class_ID.append(tmp_id)
-#         val_class_label.append(tmp_grp)
-#         val_subj_slices.append(tmp_slices)
 
         label = None
     
@@ -223,8 +209,7 @@ def fit_crossvalidation(model, cv_file, generator_params_dict, datapath, checkpo
             val_class_label[i] = label
         
     training_generator = DataGenerator(train_subj_slices,train_class_label,**generator_params_dict)
-    
-    
+        
     val_params_dict = generator_params_dict.copy()
     val_params_dict['shuffle'] = False
     
@@ -248,8 +233,6 @@ params_dict = {'dim':(img_width,img_height),
 history_path = '/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/history'
 checkpoint_path = '/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/model_checkpoints'
 cv_file = '/media/iitindmaths/Seagate_Expansion_Drive/Alz_MCI_vs_AD_1365_each_full_subject_list.pkl'
-
-    
 
 model = tf.keras.Sequential([
              tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation=None,padding='same', input_shape=(121,145,3)),
@@ -285,16 +268,11 @@ print(model.summary())
 model.compile(
     optimizer=tf.keras.optimizers.Adam(0.0001),
     loss='binary_crossentropy' ,metrics='accuracy')
-#print(model.summary())
+print(model.summary())
 
-#sys.exit(1)
-#fit_crossvalidation(model, cv_file, params_dict, datapath, checkpoint_path, history_path)
+fit_crossvalidation(model, cv_file, params_dict, datapath, checkpoint_path, history_path)
 
-
-#print(vgg_lambda.shape)
 print('reached')    
-
-
 
 history_file = history_path + "/Eight_layer_CLF_MCI_AD_1365_16_08_21_axial_slices.csv"
 
@@ -307,198 +285,127 @@ min_loss_idx = aa['validation_loss'].idxmin()+1
 
 model.load_weights('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/model_checkpoints/Eight_layer_CLF_MCI_AD_1365_16_08_21_axial_slices_0000000'+str(min_loss_idx)+'.h5')
 
-model.save('Eight-layer-large-CAT12_cor_MyModel')
+# TESTING
+cv_setting = load_cross_validation_settings(cv_file)
+full_test_dict = cv_setting['test']
+    
+test_subject_id = full_test_dict['subject_dict']
+test_subject_group = full_test_dict['subject_group']
+test_subject_slices = full_test_dict['subject_slices']
+test_subject_fnames = list(test_subject_id.keys())
+slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
 
-#cv_setting = load_cross_validation_settings(cv_file)
-#
-##print("\n\n\n\n\n\n")
-#
-##full_test_dict = cv_setting['validation']
-##test_subject_id = full_test_dict['subject_dict']
-##test_subject_group = full_test_dict['subject_group']
-##test_subject_slices = full_test_dict['subject_slices']
-##test_subject_fnames = list(test_subject_id.keys())
-##slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
-##testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
-##print('validation:\n')
-##model.evaluate(testing_generator,verbose=1) #batch size - 4
-##
-##print("\n\n\n\n\n\n")
-##
-##full_test_dict = cv_setting['test']
-##test_subject_id = full_test_dict['subject_dict']
-##test_subject_group = full_test_dict['subject_group']
-##test_subject_slices = full_test_dict['subject_slices']
-##test_subject_fnames = list(test_subject_id.keys())
-##slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
-##testing_generator = DataGenerator_CV(test_subject_fnames, full_test_dict, datapath, **params_dict)
-##print('\n\ntesting:\n')
-##model.evaluate(testing_generator,verbose=1) #batch size - 4
-#
-#cv_setting = load_cross_validation_settings(cv_file)
-#full_test_dict = cv_setting['test']
-#    
-#test_subject_id = full_test_dict['subject_dict']
-#test_subject_group = full_test_dict['subject_group']
-#test_subject_slices = full_test_dict['subject_slices']
-#test_subject_fnames = list(test_subject_id.keys())
-#slice_per_subject = len(test_subject_slices[test_subject_fnames[0]])
-#
-#
-#
-#
-#pred_list = []
-#c = 1
-#for k in test_subject_slices.keys():
-#    v = test_subject_slices[k]
-#    pred_array = []
-#    for i in v:
-#        ip = np.load('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/npy_large/smwp1/' + i)
-#        #print(ip.shape)
-#        ip = ip.reshape((1,121,145,3))
-#        pred = model.predict(ip)
-#        
-#        if pred[0] > 0.5:
-#            val = 1
-#        else:
-#            val = 0
-#        
-#        pred_array.append(val)
-#    
-#    pred_list.append(pred_array)
-#    print(c)    
-#    c = c + 1
-#    
-#
-#final_pred = []
-#for pred in pred_list:
-#    count_1 = pred.count(1)
-#    count_0 = pred.count(0)
-#
-#    if count_1 > count_0:
-#        final_pred.append(1)        
-#    elif count_1 < count_0:
-#        final_pred.append(0) 
-#    else:
-#        final_pred.append(1) 
-#
-#
-#
-#
-#
-#
-#
-#
-#
-##final_pred
-#
-##pred_list
-#
-#label_list = []
-#for k in test_subject_slices.keys():
-#    v = test_subject_group[k]
-#
-#    if v == 'AD':
-#        label = 1
-#    else:
-#        label = 0
-#    
-#    label_list.append(label)
-#
-#Y_true = np.array(label_list)
-#Y_pred = np.array(final_pred)
-#
-#print("testing")
-#print(accuracy_score(Y_true, Y_pred))
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#cv_setting = load_cross_validation_settings(cv_file)
-#full_val_dict = cv_setting['validation']
-#    
-#val_subject_id = full_val_dict['subject_dict']
-#val_subject_group = full_val_dict['subject_group']
-#val_subject_slices = full_val_dict['subject_slices']
-#val_subject_fnames = list(val_subject_id.keys())
-#slice_per_subject = len(val_subject_slices[val_subject_fnames[0]])
-#
-#
-#
-#
-#pred_list = []
-#c = 1
-#for k in val_subject_slices.keys():
-#    v = val_subject_slices[k]
-#    pred_array = []
-#    for i in v:
-#        ip = np.load('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/npy_large/smwp1/' + i)
-#        #print(ip.shape)
-#        ip = ip.reshape((1,121,145,3))
-#        pred = model.predict(ip)
-#        
-#        if pred[0] > 0.5:
-#            val = 1
-#        else:
-#            val = 0
-#        
-#        pred_array.append(val)
-#    
-#    pred_list.append(pred_array)
-#    print(c)    
-#    c = c + 1
-#    
-#
-#final_pred = []
-#for pred in pred_list:
-#    count_1 = pred.count(1)
-#    count_0 = pred.count(0)
-#
-#    if count_1 > count_0:
-#        final_pred.append(1)        
-#    elif count_1 < count_0:
-#        final_pred.append(0) 
-#    else:
-#        final_pred.append(1) 
-#
-#
-#
-#
-#
-#
-#
-#
-#
-##final_pred
-#
-##pred_list
-#
-#label_list = []
-#for k in val_subject_slices.keys():
-#    v = val_subject_group[k]
-#
-#    if v == 'AD':
-#        label = 1
-#    else:
-#        label = 0
-#    
-#    label_list.append(label)
-#
-#Y_true = np.array(label_list)
-#
-#Y_pred = np.array(final_pred)
-#
-#print("validation")
-#print(accuracy_score(Y_true, Y_pred))
-#
-#
-#
-#
+pred_list = []
+c = 1
+for k in test_subject_slices.keys():
+    v = test_subject_slices[k]
+    pred_array = []
+    for i in v:
+        ip = np.load('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/npy_large/smwp1/' + i)
+        #print(ip.shape)
+        ip = ip.reshape((1,121,145,3))
+        pred = model.predict(ip)
+        
+        if pred[0] > 0.5:
+            val = 1
+        else:
+            val = 0
+        
+        pred_array.append(val)
+    
+    pred_list.append(pred_array)
+    print(c)    
+    c = c + 1
+    
 
+final_pred = []
+for pred in pred_list:
+    count_1 = pred.count(1)
+    count_0 = pred.count(0)
+
+    if count_1 > count_0:
+        final_pred.append(1)        
+    elif count_1 < count_0:
+        final_pred.append(0) 
+    else:
+        final_pred.append(1) 
+
+
+label_list = []
+for k in test_subject_slices.keys():
+    v = test_subject_group[k]
+
+    if v == 'AD':
+        label = 1
+    else:
+        label = 0
+    
+    label_list.append(label)
+
+Y_true = np.array(label_list)
+Y_pred = np.array(final_pred)
+
+print("testing")
+print(accuracy_score(Y_true, Y_pred))
+
+# VALIDATION
+cv_setting = load_cross_validation_settings(cv_file)
+full_val_dict = cv_setting['validation']
+    
+val_subject_id = full_val_dict['subject_dict']
+val_subject_group = full_val_dict['subject_group']
+val_subject_slices = full_val_dict['subject_slices']
+val_subject_fnames = list(val_subject_id.keys())
+slice_per_subject = len(val_subject_slices[val_subject_fnames[0]])
+
+pred_list = []
+c = 1
+for k in val_subject_slices.keys():
+    v = val_subject_slices[k]
+    pred_array = []
+    for i in v:
+        ip = np.load('/media/iitindmaths/Seagate_Expansion_Drive/Bup_Backup/SPM/alzheimers-disease/MCI_vs_AD/npy_large/smwp1/' + i)
+        #print(ip.shape)
+        ip = ip.reshape((1,121,145,3))
+        pred = model.predict(ip)
+        
+        if pred[0] > 0.5:
+            val = 1
+        else:
+            val = 0
+        
+        pred_array.append(val)
+    
+    pred_list.append(pred_array)
+    print(c)    
+    c = c + 1
+    
+
+final_pred = []
+for pred in pred_list:
+    count_1 = pred.count(1)
+    count_0 = pred.count(0)
+
+    if count_1 > count_0:
+        final_pred.append(1)        
+    elif count_1 < count_0:
+        final_pred.append(0) 
+    else:
+        final_pred.append(1) 
+
+label_list = []
+for k in val_subject_slices.keys():
+    v = val_subject_group[k]
+
+    if v == 'AD':
+        label = 1
+    else:
+        label = 0
+    
+    label_list.append(label)
+
+Y_true = np.array(label_list)
+Y_pred = np.array(final_pred)
+
+print("validation")
+print(accuracy_score(Y_true, Y_pred))
